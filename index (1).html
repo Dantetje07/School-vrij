@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultieme Schoolvakantie & Vrije Dagen Afteller</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
+            color: #2d3436;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #6c5ce7;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .regio-selector {
+            margin: 15px 0 25px 0;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 2px solid #6c5ce7;
+            background-color: white;
+            color: #2d3436;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .klok {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #2d3436;
+            background-color: #dfe6e9;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-family: monospace;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #2d3436;
+            text-align: left;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #dfe6e9;
+            padding-bottom: 5px;
+        }
+
+        .countdown-lijst {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vakantie-kaart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #f5f6fa;
+            border-radius: 8px;
+            border-left: 5px solid #00cec9;
+            text-align: left;
+        }
+
+        /* Kleuren */
+        .vakantie-kaart.herfst { border-left-color: #e67e22; }
+        .vakantie-kaart.kerst { border-left-color: #2ecc71; }
+        .vakantie-kaart.voorjaar { border-left-color: #9b59b6; }
+        .vakantie-kaart.mei { border-left-color: #f1c40f; }
+        .vakantie-kaart.zomer { border-left-color: #e74c3c; }
+        .vakantie-kaart.feestdag { border-left-color: #0984e3; }
+
+        .vakantie-kaart.actief {
+            border-left-color: #2ecc71 !important;
+            background-color: #e8f5e9;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .vakantie-info {
+            flex: 1;
+        }
+
+        .vakantie-titel {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .vakantie-datum {
+            font-size: 0.8rem;
+            color: #b2bec3;
+        }
+
+        .tijd-over {
+            font-size: 1.05rem;
+            font-weight: bold;
+            font-family: monospace;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Schoolvakantie & Vrije Dagen</h1>
+    
+    <select id="regioSelect" class="regio-selector" onchange="wisselRegio()">
+        <option value="zuid">Regio Zuid (o.a. Noord-Brabant, Limburg)</option>
+        <option value="midden">Regio Midden (o.a. Utrecht, Gelderland)</option>
+        <option value="noord">Regio Noord (o.a. Noord-Holland, Friesland)</option>
+    </select>
+    
+    <div class="klok" id="live-klok">00:00:00</div>
+
+    <h2>📅 Lange & Korte Vakanties</h2>
+    <div class="countdown-lijst">
+        <div class="vakantie-kaart herfst" id="kaart-herfst">
+            <div class="vakantie-info"><div class="vakantie-titel">🍁 Herfstvakantie</div><div class="vakantie-datum" id="datum-herfst">Laden...</div></div>
+            <div class="tijd-over" id="herfst">Laden...</div>
+        </div>
+        <div class="vakantie-kaart kerst" id="kaart-kerst">
+            <div class="vakantie-info"><div class="vakantie-titel">🎄 Kerstvakantie</div><div class="vakantie-datum" id="datum-kerst">Laden...</div></div>
+            <div class="tijd-over" id="kerst">Laden...</div>
+        </div>
+        <div class="vakantie-kaart voorjaar" id="kaart-voorjaar">
+            <div class="vakantie-info"><div class="vakantie-titel">🎭 Voorjaarsvakantie</div><div class="vakantie-datum" id="datum-voorjaar">Laden...</div></div>
+            <div class="tijd-over" id="voorjaar">Laden...</div>
+        </div>
+        <div class="vakantie-kaart mei" id="kaart-mei">
+            <div class="vakantie-info"><div class="vakantie-titel">🌷 Meivakantie</div><div class="vakantie-datum" id="datum-mei">Laden...</div></div>
+            <div class="tijd-over" id="mei">Laden...</div>
+        </div>
+        <div class="vakantie-kaart zomer" id="kaart-zomer">
+            <div class="vakantie-info"><div class="vakantie-titel">☀️ Grote Zomervakantie</div><div class="vakantie-datum" id="datum-zomer">Laden...</div></div>
+            <div class="tijd-over" id="zomer">Laden...</div>
+        </div>
+    </div>
+
+    <h2>🎈 Door de weekse vrije dagen (Feestdagen)</h2>
+    <div class="countdown-lijst">
+        <div class="vakantie-kaart feestdag" id="kaart-goodevrijdag">
+            <div class="vakantie-info"><div class="vakantie-titel">✝️ Goede Vrijdag</div><div class="vakantie-datum" id="datum-goodevrijdag">Laden...</div></div>
+            <div class="tijd-over" id="goodevrijdag">Laden...</div>
+        </div>
+        <div class="vakantie-kaart feestdag" id="kaart-pasen">
+            <div class="vakantie-info"><div class="vakantie-titel">🥚 Paasmaandag</div><div class="vakantie-datum" id="datum-pasen">Laden...</div></div>
+            <div class="tijd-over" id="pasen">Laden...</div>
+        </div>
+        <div class="vakantie-kaart feestdag" id="kaart-koningsdag">
+            <div class="vakantie-info"><div class="vakantie-titel">👑 Koningsdag</div><div class="vakantie-datum" id="datum-koningsdag">Laden...</div></div>
+            <div class="tijd-over" id="koningsdag">Laden...</div>
+        </div>
+        <div class="vakantie-kaart feestdag" id="kaart-hemelvaart">
+            <div class="vakantie-info"><div class="vakantie-titel">🚀 Hemelvaart + Vrijdag vrij</div><div class="vakantie-datum" id="datum-hemelvaart">Laden...</div></div>
+            <div class="tijd-over" id="hemelvaart">Laden...</div>
+        </div>
+        <div class="vakantie-kaart feestdag" id="kaart-pinksteren">
+            <div class="vakantie-info"><div class="vakantie-titel">🕊️ Pinkstermaandag</div><div class="vakantie-datum" id="datum-pinksteren">Laden...</div></div>
+            <div class="tijd-over" id="pinksteren">Laden...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Data setup per regio (Gebaseerd op schooljaren 2026-2027)
+    const dataPerRegio = {
+        zuid: {
+            herfst:   { label: "okt", tekst: "17 okt t/m 25 okt", start: [10, 17, 15, 0], eind: [10, 25, 23, 59] },
+            kerst:    { label: "dec", tekst: "19 dec t/m 3 jan", start: [12, 19, 15, 0], eind: [1, 3, 23, 59] },
+            voorjaar: { label: "feb", tekst: "13 feb t/m 21 feb", start: [2, 13, 15, 0], eind: [2, 21, 23, 59] },
+            mei:      { label: "mei", tekst: "24 apr t/m 2 mei", start: [4, 24, 15, 0], eind: [5, 2, 23, 59] },
+            zomer:    { label: "zomer", tekst: "11 juli t/m 23 aug", start: [7, 11, 12, 0], eind: [8, 23, 23, 59] },
+            goodevrijdag: { label: "feest", tekst: "Goede Vrijdag", start: [4, 2, 0, 1], eind: [4, 2, 23, 59] },
+            pasen:        { label: "feest", tekst: "Tweede Paasdag", start: [4, 5, 0, 1], eind: [4, 5, 23, 59] },
+            koningsdag:   { label: "feest", tekst: "Koningsdag 27 april", start: [4, 27, 0, 1], eind: [4, 27, 23, 59] },
+            hemelvaart:   { label: "feest", tekst: "Hemelvaart (4 dagen vrij!)", start: [5, 6, 0, 1], eind: [5, 9, 23, 59] },
+            pinksteren:   { label: "feest", tekst: "Tweede Pinksterdag", start: [5, 17, 0, 1], eind: [5, 17, 23, 59] }
+        },
+        midden: {
+            herfst:   { label: "okt", tekst: "24 okt t/m 1 nov", start: [10, 24, 15, 0], eind: [11, 1, 23, 59] },
+            kerst:    { label: "dec", tekst: "19 dec t/m 3 jan", start: [12, 19, 15, 0], eind: [1, 3, 23, 59] },
+            voorjaar: { label: "feb", tekst: "20 feb t/m 28 feb", start: [2, 20, 15, 0], eind: [2, 28, 23, 59] },
+            mei:      { label: "mei", tekst: "24 apr t/m 2 mei", start: [4, 24, 15, 0], eind: [5, 2, 23, 59] },
+            zomer:    { label: "zomer", tekst: "18 juli t/m 30 aug", start: [7, 18, 12, 0], eind: [8, 30, 23, 59] },
+            goodevrijdag: { label: "feest", tekst: "Goede Vrijdag", start: [4, 2, 0, 1], eind: [4, 2, 23, 59] },
+            pasen:        { label: "feest", tekst: "Tweede Paasdag", start: [4, 5, 0, 1], eind: [4, 5, 23, 59] },
+            koningsdag:   { label: "feest", tekst: "Koningsdag 27 april", start: [4, 27, 0, 1], eind: [4, 27, 23, 59] },
+            hemelvaart:   { label: "feest", tekst: "Hemelvaart (4 dagen vrij!)", start: [5, 6, 0, 1], eind: [5, 9, 23, 59] },
+            pinksteren:   { label: "feest", tekst: "Tweede Pinksterdag", start: [5, 17, 0, 1], eind: [5, 17, 23, 59] }
+        },
+        noord: {
+            herfst:   { label: "okt", tekst: "24 okt t/m 1 nov", start: [10, 24, 15, 0], eind: [11, 1, 23, 59] },
+            kerst:    { label: "dec", tekst: "19 dec t/m 3 jan", start: [12, 19, 15, 0], eind: [1, 3, 23, 59] },
+            voorjaar: { label: "feb", tekst: "20 feb t/m 28 feb", start: [2, 20, 15, 0], eind: [2, 28, 23, 59] },
+            mei:      { label: "mei", tekst: "24 apr t/m 2 mei", start: [4, 24, 15, 0], eind: [5, 2, 23, 59] },
+            zomer:    { label: "zomer", tekst: "4 juli t/m 16 aug", start: [7, 4, 12, 0],  eind: [8, 16, 23, 59] },
+            goodevrijdag: { label: "feest", tekst: "Goede Vrijdag", start: [4, 2, 0, 1], eind: [4, 2, 23, 59] },
+            pasen:        { label: "feest", tekst: "Tweede Paasdag", start: [4, 5, 0, 1], eind: [4, 5, 23, 59] },
+            koningsdag:   { label: "feest", tekst: "Koningsdag 27 april", start: [4, 27, 0, 1], eind: [4, 27, 23, 59] },
+            hemelvaart:   { label: "feest", tekst: "Hemelvaart (4 dagen vrij!)", start: [5, 6, 0, 1], eind: [5, 9, 23, 59] },
+            pinksteren:   { label: "feest", tekst: "Tweede Pinksterdag", start: [5, 17, 0, 1], eind: [5, 17, 23, 59] }
+        }
+    };
+
+    let huidigeRegio = "zuid";
+
+    function wisselRegio() {
+        huidigeRegio = document.getElementById("regioSelect").value;
+        updateKlokEnCountdowns();
+    }
+
+    function maakDatumMetSlimJaar(maand, dag, uur, minuut, huidigeDatum) {
+        let jaar = huidigeDatum.getFullYear();
+        let testDatum = new Date(jaar, maand - 1, dag, uur, minuut);
+        
+        if (huidigeDatum.getTime() - testDatum.getTime() > 24 * 60 * 60 * 1000) {
+            jaar += 1;
+        }
+        return new Date(jaar, maand - 1, dag, uur, minuut);
+    }
+
+    function updateKlokEnCountdowns() {
+        const nu = new Date();
+        const nuTijd = nu.getTime();
+
+        let uren = nu.getHours().toString().padStart(2, '0');
+        let minuten = nu.getMinutes().toString().padStart(2, '0');
+        let seconden = nu.getSeconds().toString().padStart(2, '0');
+        document.getElementById('live-klok').innerText = `${uren}:${minuten}:${seconden}`;
+
+        const vakanties = dataPerRegio[huidigeRegio];
+
+        for (const [key, vakantie] of Object.entries(vakanties)) {
+            const countdownElement = document.getElementById(key);
+            const kaartElement = document.getElementById(`kaart-${key}`);
+            const datumElement = document.getElementById(`datum-${key}`);
+
+            let startD = maakDatumMetSlimJaar(vakantie.start[0], vakantie.start[1], vakantie.start[2], vakantie.start[3], nu);
+            let eindD = maakDatumMetSlimJaar(vakantie.eind[0], vakantie.eind[1], vakantie.eind[2], vakantie.eind[3], nu);
+            
+            if (eindD.getTime() < startD.getTime()) {
+                eindD.setFullYear(startD.getFullYear() + 1);
+            }
+
+            datumElement.innerText = `${vakantie.tekst} (${startD.getFullYear()})`;
+
+            const startTijd = startD.getTime();
+            const eindTijd = eindD.getTime();
+
+            kaartElement.classList.remove('actief');
+
+            // SITUATIE 1: De vakantie is NU bezig! 
+            if (nuTijd >= startTijd && nuTijd <= eindTijd) {
+                kaartElement.classList.add('actief');
+                const verschilEind = eindTijd - nuTijd;
+                
+                // Hier telt hij nu LIVE af tot het einde van de vakantie!
+                countdownElement.innerHTML = `<span style="color: #2ecc71;">Nog ${formatteerTijd(verschilEind)}! 😍</span>`;
+            } 
+            // SITUATIE 2: De vakantie moet nog komen (Aftellen tot het begin)
+            else {
+                let effectieveStart = startTijd;
+                if (nuTijd > startTijd) {
+                    let volgendeStart = maakDatumMetSlimJaar(vakantie.start[0], vakantie.start[1], vakantie.start[2], vakantie.start[3], new Date(nu.getFullYear() + 1, nu.getMonth(), nu.getDate()));
+                    effectieveStart = volgendeStart.getTime();
+                }
+                
+                const verschilStart = effectieveStart - nuTijd;
+                countdownElement.innerText = formatteerTijd(verschilStart);
+            }
+        }
+    }
+
+    function formatteerTijd(verschil) {
+        const dagen = Math.floor(verschil / (1000 * 60 * 60 * 24));
+        const uren = Math.floor((verschil % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minuten = Math.floor((verschil % (1000 * 60 * 60)) / (1000 * 60));
+        return `${dagen}d ${uren}u ${minuten}m`;
+    }
+
+    updateKlokEnCountdowns();
+    setInterval(updateKlokEnCountdowns, 1000);
+</script>
+
+</body>
+</html>
